@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.CodeAnalysis.CSharp;
 using MyLeasing.Web.Helpers;
 
 namespace MyLeasing.Web.Data
@@ -47,33 +48,50 @@ namespace MyLeasing.Web.Data
 
             }
 
-
             if (!_context.Owners.Any())
             {
-                AddOwner("Filipe", "Ferreira",user);
-                AddOwner("Rafael", "Santos", user);
-                AddOwner("Maria", "Callas", user);
-                AddOwner("João", "Rodrigues", user);
-                AddOwner("Rui", "Costa", user);
-                AddOwner("Maria", "Lopes", user);
-                AddOwner("Gonçalo", "Patricio", user);
-                AddOwner("Eliane", "Santos", user);
-                AddOwner("Sofia", "Jasus", user);
-                AddOwner("Cristiano", "SemRonaldo", user);
+                AddUser("Filipe", "Ferreira","Montijo");
+                AddUser("Rafael", "Santos","Lisboa");
+                AddUser("Maria", "Callas","Porto");
+                AddUser("João", "Rodrigues","Setubal");
+                AddUser("Rui", "Costa","Braga");
+                AddUser("Maria", "Lopes","Lisboa");
+                AddUser("Gonçalo", "Patricio","Porto");
+                AddUser("Eliane", "Santos","Porto");
+                AddUser("Sofia", "Jasus","Leiria");
+                AddUser("Cristiano", "SemRonaldo","Cascais");
+                var users = _context.Users.AsQueryable().ToList();
+                foreach (var owner in users)
+                {
+                    AddOwner(owner);
+                }
                 await _context.SaveChangesAsync();
             }
         }
 
-        private void AddOwner(string firstName,string lastName,User user)
+        private void AddUser(string firstName,string lastName,string address)
+        {
+            _userHelper.AddUserAsync(new User
+            {
+                FirstName = firstName,
+                LastName = lastName,
+                Email = firstName+lastName+"@yopmail.com",
+                UserName = firstName + lastName + "@yopmail.com",
+                Document = _random.Next(99999999).ToString(),
+                Address = address,
+                PhoneNumber = _random.Next(969999999).ToString()
+            },"123456");
+        }
+
+        private void AddOwner(User user)
         {
             _context.Owners.Add(new Owner
             {
-                Document = _random.Next(99999999),
-                FirstName = firstName,
-                LastName = lastName,
+                Document = int.Parse(user.Document),
+                FirstName = user.FirstName,
+                LastName = user.LastName,
                 FixedPhone = _random.Next(219999999),
-                CellPhone = _random.Next(969999999),
-                User = user
+                CellPhone = int.Parse(user.PhoneNumber),
             }); ;
         }
     }
