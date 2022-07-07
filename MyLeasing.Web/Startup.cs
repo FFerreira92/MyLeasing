@@ -31,7 +31,7 @@ namespace MyLeasing.Web
             });
 
             services.AddTransient<SeedDb>();
-            services.AddScoped<IRepository, Repository>();
+            services.AddScoped<IOwnerRepository, OwnerRepository>();
 
             services.AddControllersWithViews();
         }
