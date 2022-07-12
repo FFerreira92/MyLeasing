@@ -30,6 +30,8 @@ namespace MyLeasing.Web.Data.Entities
         [Display(Name ="Owner Name")]
         public string FullName => $"{FirstName} {LastName}";
 
+        [Display(Name = "Image")] 
+        public string ImageUrl { get; set; }
 
         public User User { get; set; } 
     }

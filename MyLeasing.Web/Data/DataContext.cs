@@ -8,7 +8,6 @@ namespace MyLeasing.Web.Data
     {
         public DbSet<Owner> Owners { get; set; }
 
-
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
 

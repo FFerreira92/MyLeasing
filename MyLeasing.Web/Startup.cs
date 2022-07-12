@@ -44,11 +44,12 @@ namespace MyLeasing.Web
             {
                 cfg.UseSqlServer(this.Configuration.GetConnectionString("DefaultConnection"));
             });
-
+            
+            
             services.AddTransient<SeedDb>();
             services.AddScoped<IUserHelper, UserHelper>();
             services.AddScoped<IOwnerRepository, OwnerRepository>();
-
+          
             services.AddControllersWithViews();
         }
 

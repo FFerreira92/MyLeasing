@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using MyLeasing.Web.Data.Entities;
 
@@ -22,5 +23,11 @@ namespace MyLeasing.Web.Helpers
         {
             return await _userManager.CreateAsync(user, password);
         }
+
+        public IQueryable<User> GetAllUsers()
+        {
+            return _userManager.Users;
+        }
+      
     }
 }

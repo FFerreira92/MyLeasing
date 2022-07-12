@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using MyLeasing.Web.Data.Entities;
 
@@ -9,5 +10,7 @@ namespace MyLeasing.Web.Helpers
         Task<User> GetUserByEmailAsync(string email);
 
         Task<IdentityResult> AddUserAsync(User user, string password);
+
+        IQueryable<User> GetAllUsers();
     }
 }
