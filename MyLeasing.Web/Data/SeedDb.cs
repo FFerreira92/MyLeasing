@@ -34,12 +34,12 @@ namespace MyLeasing.Web.Data
             {
                 AddUser("Filipe","Ferreira","Montijo");
 
-                var result = await _userHelper.AddUserAsync(user, "Cinel123");
-                if (result != IdentityResult.Success)
+                user = await _userHelper.GetUserByEmailAsync("FilipeFerreira@yopmail.com");
+
+                if (user == null)
                 {
                     throw new InvalidOperationException("Could not create the user in seeder");
                 }
-
             }
 
             if (!_context.Owners.Any())
@@ -55,14 +55,32 @@ namespace MyLeasing.Web.Data
                 AddUser("Sofia", "Jasus","Leiria");
                 AddUser("Cristiano", "SemRonaldo","Cascais");
 
-                //var users = _context.Users.AsQueryable().ToList();
                 var users = _userHelper.GetAllUsers();
+
                 foreach (var owner in users)
                 {
                     AddOwner(owner).Wait();
                 }
                 await _context.SaveChangesAsync();
             }
+
+            if (!_context.Lessee.Any())
+            {
+                string[] firstNames = new string[5] {"Gervasio","Gertrudes","Maria","Simao","Elon"};
+                string[] lastNames = new string[5] { "Pereira", "Feiosa", "Catarro", "Guedes", "Musk" };
+                string[] address = new string[5] {"Lisboa","Porto","Évora","Setúbal","Flórida"};
+
+                for (int i = 0; i < 5; i++)
+                {
+                    AddUser(firstNames[i],lastNames[i],address[i]);
+                    var fetchUser = await _userHelper.GetUserByEmailAsync(firstNames[i] + lastNames[i] + "@yopmail.com");
+                    AddLessee(fetchUser).Wait();
+                }
+
+                await _context.SaveChangesAsync();
+            }
+
+
         }
 
         private void AddUser(string firstName,string lastName,string address)
@@ -77,11 +95,10 @@ namespace MyLeasing.Web.Data
                 Address = address,
                 PhoneNumber = _random.Next(96999999).ToString()
             },"123456").Wait();
-
+            
         }
 
         private async Task AddOwner(User user)
-        
         {
             if (user != null)
             {
@@ -103,6 +120,33 @@ namespace MyLeasing.Web.Data
                 });
             }
         }
+
+        private async Task AddLessee(User user)
+        {
+            if (user != null)
+            {
+                var phone = 0;
+
+                if (user.PhoneNumber != null)
+                {
+                    phone = int.Parse(user.PhoneNumber);
+                }
+
+                var lessee = _context.Lessee.Add(new Lessee
+                {
+                    Document = int.Parse(user.Document),
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    FixedPhone = _random.Next(21999999),
+                    CellPhone = phone,
+                    User = user,
+                    Address = user.Address
+                });
+            }
+        }
+
+
+
     }
 }
 
