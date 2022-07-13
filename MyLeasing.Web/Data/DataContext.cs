@@ -12,5 +12,7 @@ namespace MyLeasing.Web.Data
         {
 
         }
+
+        public DbSet<MyLeasing.Web.Data.Entities.Lessee> Lessee { get; set; }
     }
 }

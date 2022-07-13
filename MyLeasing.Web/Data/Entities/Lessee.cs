@@ -3,7 +3,7 @@ using System.Xml.Linq;
 
 namespace MyLeasing.Web.Data.Entities
 {
-    public class Lessee
+    public class Lessee : IEntity
     {
         public int Id { get; set; }
 
@@ -33,5 +33,7 @@ namespace MyLeasing.Web.Data.Entities
         public string FullName => $"{FirstName} {LastName}";
 
         public string FullNameWithDocument => $"{FirstName} {LastName} - {Document}";
+
+        public User User { get; set; }
     }
 }

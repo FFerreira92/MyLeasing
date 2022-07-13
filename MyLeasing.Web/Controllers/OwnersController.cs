@@ -138,6 +138,7 @@ namespace MyLeasing.Web.Controllers
                     var owner = _converterHelper.toOwner(model, path, false);
 
                     owner.User = await _userHelper.GetUserByEmailAsync("FilipeFerreira@yopmail.com");
+
                     await _repository.UpdateAsync(owner);
                 }
                 catch (DbUpdateConcurrencyException)
