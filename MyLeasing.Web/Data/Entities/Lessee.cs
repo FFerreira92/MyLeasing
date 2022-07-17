@@ -1,5 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.Xml.Linq;
+using MyLeasing.Web.Migrations;
 
 namespace MyLeasing.Web.Data.Entities
 {
@@ -28,7 +30,11 @@ namespace MyLeasing.Web.Data.Entities
 
         public string Address { get; set; }
 
-        public string Photo { get; set; }
+        public Guid Photo { get; set; }
+
+        public string ImageFullPath => Photo == Guid.Empty
+            ? $"https://myleasingtpsi.azurewebsites.net/images/noimage.png"
+            : $"https://myleasingtpsi69.blob.core.windows.net/lessees/{Photo}";
 
         public string FullName => $"{FirstName} {LastName}";
 

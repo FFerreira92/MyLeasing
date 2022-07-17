@@ -17,15 +17,15 @@ namespace MyLeasing.Web.Controllers
     {
         private readonly ILesseeRepository _lesseeRepository;
         private readonly IUserHelper _userHelper;
-        private readonly IImageHelper _imageHelper;
+        private readonly IBlobHelper _blobHelper;
         private readonly IConverterHelper _converterHelper;
 
 
-        public LesseesController(ILesseeRepository lesseeRepository, IUserHelper userHelper, IImageHelper imageHelper, IConverterHelper converterHelper)
+        public LesseesController(ILesseeRepository lesseeRepository, IUserHelper userHelper, IBlobHelper blobHelper, IConverterHelper converterHelper)
         {
             _lesseeRepository = lesseeRepository;
             _userHelper = userHelper;
-            _imageHelper = imageHelper;
+            _blobHelper = blobHelper;
             _converterHelper = converterHelper;
         }
 
@@ -69,14 +69,14 @@ namespace MyLeasing.Web.Controllers
             if (ModelState.IsValid)
             {
 
-                var path = string.Empty;
+                Guid photoId = Guid.Empty;
 
                 if (model.ImageFile != null && model.ImageFile.Length > 0)
                 {
-                    path = await _imageHelper.UploadImageAsync(model.ImageFile, "lessees");
+                    photoId = await _blobHelper.UploadBlobAsync(model.ImageFile, "lessees");
                 }
 
-                var lessee = _converterHelper.ToLessee(model, path, true);
+                var lessee = _converterHelper.ToLessee(model, photoId, true);
 
                 lessee.User = new User
                 {
@@ -129,14 +129,14 @@ namespace MyLeasing.Web.Controllers
                 try
                 {
 
-                    var path = model.Photo;
+                    var photoId = model.Photo;
 
                     if (model.ImageFile != null && model.ImageFile.Length > 0)
                     {
-                        path = await _imageHelper.UploadImageAsync(model.ImageFile, "lessees");
+                        photoId = await _blobHelper.UploadBlobAsync(model.ImageFile, "lessees");
                     }
 
-                    var lessee = _converterHelper.ToLessee(model, path, false);
+                    var lessee = _converterHelper.ToLessee(model, photoId, false);
 
                     await _lesseeRepository.UpdateAsync(lessee);
                 }

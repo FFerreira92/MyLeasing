@@ -18,14 +18,14 @@ namespace MyLeasing.Web.Controllers
     {
         private readonly IOwnerRepository _repository;
         private readonly IUserHelper _userHelper;
-        private readonly IImageHelper _imageHelper;
+        private readonly IBlobHelper _blobHelper;
         private readonly IConverterHelper _converterHelper;
 
-        public OwnersController(IOwnerRepository repository,IUserHelper userHelper,IImageHelper imageHelper,IConverterHelper converterHelper)
+        public OwnersController(IOwnerRepository repository,IUserHelper userHelper,IBlobHelper blobHelper,IConverterHelper converterHelper)
         {
             _repository = repository;
             _userHelper = userHelper;
-            _imageHelper = imageHelper;
+            _blobHelper = blobHelper;
             _converterHelper = converterHelper;
         }
 
@@ -69,14 +69,14 @@ namespace MyLeasing.Web.Controllers
             if (ModelState.IsValid)
             {
 
-                var path = string.Empty;
+                Guid imageId = Guid.Empty;
 
                 if (model.ImageFile != null && model.ImageFile.Length > 0)
                 {
-                    path = await _imageHelper.UploadImageAsync(model.ImageFile, "owners");
+                    imageId = await _blobHelper.UploadBlobAsync(model.ImageFile, "owners");
                 }
 
-                var owner = _converterHelper.toOwner(model, path, true);
+                var owner = _converterHelper.toOwner(model, imageId, true);
 
                 owner.User = new User
                 {
@@ -88,8 +88,10 @@ namespace MyLeasing.Web.Controllers
                     Address = owner.Adress,
                     PhoneNumber = owner.CellPhone.ToString(),
                 };
+
                 await _repository.CreateAsync(owner);
                 return RedirectToAction(nameof(Index));
+
             }
             return View(model);
         }
@@ -128,14 +130,14 @@ namespace MyLeasing.Web.Controllers
             {
                 try
                 {
-                    var path = model.ImageUrl;
+                    var imageId = model.ImageId;
 
                     if (model.ImageFile != null && model.ImageFile.Length > 0)
                     {
-                        path = await _imageHelper.UploadImageAsync(model.ImageFile, "owners");
+                        imageId = await _blobHelper.UploadBlobAsync(model.ImageFile, "owners");
                     }
 
-                    var owner = _converterHelper.toOwner(model, path, false);
+                    var owner = _converterHelper.toOwner(model, imageId, false);
 
                     owner.User = await _userHelper.GetUserByEmailAsync("FilipeFerreira@yopmail.com");
 
