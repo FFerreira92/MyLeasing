@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ using MyLeasing.Web.Models;
 
 namespace MyLeasing.Web.Controllers
 {
+    [Authorize]
     public class LesseesController : Controller
     {
         private readonly ILesseeRepository _lesseeRepository;
