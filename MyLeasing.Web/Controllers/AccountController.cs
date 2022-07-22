@@ -196,8 +196,12 @@ namespace MyLeasing.Web.Controllers
         }
 
 
+        public IActionResult NotAuthorized()
+        {
+            return View();
+        }
+
+
     }
-
-
-
+    
 }

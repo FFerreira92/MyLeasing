@@ -42,14 +42,14 @@ namespace MyLeasing.Web.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("OwnerNotFound");
             }
 
             var owner = await _repository.GetByIdAsync(id.Value);
 
             if (owner == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("OwnerNotFound");
             }
 
             return View(owner);
@@ -106,14 +106,14 @@ namespace MyLeasing.Web.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("OwnerNotFound");
             }
 
             var owner = await _repository.GetByIdAsync(id.Value);
 
             if (owner == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("OwnerNotFound");
             }
 
             var model = _converterHelper.toOwnerViewModel(owner);
@@ -168,14 +168,14 @@ namespace MyLeasing.Web.Controllers
         {
             if (id == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("OwnerNotFound");
             }
 
             var owner = await _repository.GetByIdAsync(id.Value);
 
             if (owner == null)
             {
-                return NotFound();
+                return new NotFoundViewResult("OwnerNotFound");
             }
 
             return View(owner);
@@ -189,6 +189,12 @@ namespace MyLeasing.Web.Controllers
             var owner = await _repository.GetByIdAsync(id);
             await _repository.DeleteAsync(owner);
             return RedirectToAction(nameof(Index));
+        }
+
+
+        public IActionResult OwnerNotFound()
+        {
+            return View();
         }
       
     }
