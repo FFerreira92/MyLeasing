@@ -1,5 +1,6 @@
 ﻿using MyLeasing.Web.Data.Entities;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
@@ -12,14 +13,16 @@ namespace MyLeasing.Web.Data
     {
         private readonly DataContext _context;
         private readonly IUserHelper _userHelper;
-     
+        private readonly ILesseeRepository _lesseeRepository;
+
         private Random _random;
 
-        public SeedDb(DataContext context,IUserHelper userHelper)
+        public SeedDb(DataContext context,IUserHelper userHelper,ILesseeRepository lesseeRepository)
         {
             _context = context;
             _userHelper = userHelper;
-         
+            _lesseeRepository = lesseeRepository;
+
             _random = new Random();
         }
 
@@ -27,6 +30,10 @@ namespace MyLeasing.Web.Data
         public async Task SeedAsync()
         {
             await _context.Database.EnsureCreatedAsync();
+
+            await _userHelper.CheckRoleAsync("Admin");
+            await _userHelper.CheckRoleAsync("Owner");
+            await _userHelper.CheckRoleAsync("Lessee");
 
             var user = await _userHelper.GetUserByEmailAsync("FilipeFerreira@yopmail.com");
 
@@ -40,6 +47,14 @@ namespace MyLeasing.Web.Data
                 {
                     throw new InvalidOperationException("Could not create the user in seeder");
                 }
+
+                await _userHelper.AddUserToRoleAsync(user, "Admin");
+            }
+
+            var isInRole = await _userHelper.IsUserInRoleAsync(user, "Admin");
+            if (!isInRole)
+            {
+                await _userHelper.AddUserToRoleAsync(user, "Admin");
             }
 
             if (!_context.Owners.Any())
@@ -55,11 +70,14 @@ namespace MyLeasing.Web.Data
                 AddUser("Sofia", "Jasus","Leiria");
                 AddUser("Cristiano", "SemRonaldo","Cascais");
 
-                var users = _userHelper.GetAllUsers();
+                var users = _userHelper.GetAllUsers().ToList();
 
                 foreach (var owner in users)
                 {
                     AddOwner(owner).Wait();
+
+                    _userHelper.AddUserToRoleAsync(owner, "Owner").Wait();
+
                 }
                 await _context.SaveChangesAsync();
             }
@@ -75,7 +93,9 @@ namespace MyLeasing.Web.Data
                     AddUser(firstNames[i],lastNames[i],address[i]);
                     var fetchUser = await _userHelper.GetUserByEmailAsync(firstNames[i] + lastNames[i] + "@yopmail.com");
                     AddLessee(fetchUser).Wait();
+                    _userHelper.AddUserToRoleAsync(fetchUser, "Lessee").Wait();
                 }
+
 
                 await _context.SaveChangesAsync();
             }

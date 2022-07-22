@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using Microsoft.EntityFrameworkCore;
 using MyLeasing.Web.Data.Entities;
 
 namespace MyLeasing.Web.Data
@@ -14,7 +15,7 @@ namespace MyLeasing.Web.Data
 
         public IQueryable GetAllWithUsers()
         {
-            throw new System.NotImplementedException();
+            return _context.Lessee.Include(o => o.User);
         }
     }
 }

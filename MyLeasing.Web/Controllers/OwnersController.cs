@@ -15,7 +15,7 @@ using MyLeasing.Web.Models;
 
 namespace MyLeasing.Web.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class OwnersController : Controller
     {
         private readonly IOwnerRepository _repository;
@@ -92,6 +92,8 @@ namespace MyLeasing.Web.Controllers
                 };
 
                 await _repository.CreateAsync(owner);
+                await _userHelper.AddUserToRoleAsync(owner.User, "Owner");
+
                 return RedirectToAction(nameof(Index));
 
             }
